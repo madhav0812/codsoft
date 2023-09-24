@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+
+// Function to display the Tic-Tac-Toe board
+void displayBoard(const std::vector<std::vector<char>>& board) {
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            std::cout << board[row][col];
+            if (col < 2) std::cout << " | ";
+        }
+        std::cout << std::endl;
+        if (row < 2) std::cout << "---------" << std::endl;
+    }
+}
+
+// Function to check if a player has won
+bool checkWin(const std::vector<std::vector<char>>& board, char player) {
+    for (int i = 0; i < 3; ++i) {
+        if (board[i][0] == player && board[i][1] == player && board[i][2] == player)
+            return true; // Check rows
+        if (board[0][i] == player && board[1][i] == player && board[2][i] == player)
+            return true; // Check columns
+    }
+    if (board[0][0] == player && board[1][1] == player && board[2][2] == player)
+        return true; // Check diagonal (top-left to bottom-right)
+    if (board[0][2] == player && board[1][1] == player && board[2][0] == player)
+        return true; // Check diagonal (top-right to bottom-left)
+    return false;
+}
+
+// Function to check if the game is a draw
+bool checkDraw(const std::vector<std::vector<char>>& board) {
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            if (board[row][col] == ' ')
+                return false; // If there's an empty space, the game is not a draw yet
+        }
+    }
+    return true; // All spaces are filled, it's a draw
+}
+
+int main() {
+    std::vector<std::vector<char>> board(3, std::vector<char>(3, ' '));
+    char currentPlayer = 'X';
+    bool gameWon = false;
+    bool gameDraw = false;
+
+    std::cout << "Welcome to Tic-Tac-Toe!" << std::endl;
+
+    do {
+        // Display the current state of the board
+        std::cout << "Current board:" << std::endl;
+        displayBoard(board);
+
+        // Prompt the current player for their move
+        int row, col;
+        std::cout << "Player " << currentPlayer << ", enter your move (row and column, e.g., 1 2): ";
+        std::cin >> row >> col;
+
+        // Check if the move is valid
+        if (row >= 1 && row <= 3 && col >= 1 && col <= 3 && board[row - 1][col - 1] == ' ') {
+            board[row - 1][col - 1] = currentPlayer;
+            gameWon = checkWin(board, currentPlayer);
+            gameDraw = checkDraw(board);
+
+            // Switch players
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        } else {
+            std::cout << "Invalid move. Try again." << std::endl;
+        }
+    } while (!gameWon && !gameDraw);
+
+    // Display the final state of the board
+    std::cout << "Final board:" << std::endl;
+    displayBoard(board);
+
+    // Display the result of the game
+    if (gameWon)
+        std::cout << "Player " << currentPlayer << " wins!" << std::endl;
+    else
+        std::cout << "It's a draw!" << std::endl;
+
+    return 0;
+}
